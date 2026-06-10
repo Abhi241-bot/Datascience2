@@ -11,7 +11,7 @@ An autonomous **multi-agent analyst**: a LangGraph workflow that plans a task, c
 | 1 | QLoRA fine-tune of the SQL tool (Spider) | ✅ scripts + notebook |
 | 2 | Tools (retrieval, web search, text-to-SQL) | ✅ |
 | 3 | LangGraph workflow + memory | ✅ |
-| 4 | Guardrails | ⏳ |
+| 4 | Guardrails | ✅ |
 | 5 | Evals (RAGAS, DeepEval, LangSmith) | ⏳ |
 | 6 | Gradio app + HF Spaces deploy | ⏳ |
 | 7 | Tests & README | ⏳ |
