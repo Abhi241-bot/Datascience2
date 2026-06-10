@@ -13,8 +13,11 @@ langchain-groq==0.2.1          # orchestrator LLM (Groq, OpenAI-compatible, free
 langsmith==0.2.4
 
 # Vector store + embeddings (retrieval)
+# Chroma ships an ONNX all-MiniLM-L6-v2 embedder (onnxruntime, no torch) used by
+# default — keeps the image light. sentence-transformers is OPTIONAL (only if you
+# set EMBEDDING_MODEL to an ST model id); uncomment to enable.
 chromadb==0.5.23
-sentence-transformers==3.3.1   # local embeddings (free, no API key)
+# sentence-transformers==3.3.1
 
 # Text-to-SQL inference (loads the QLoRA adapter on Spaces / locally)
 transformers==4.47.1

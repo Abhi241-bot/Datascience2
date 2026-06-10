@@ -49,12 +49,24 @@ def _client():
 
 @functools.lru_cache(maxsize=1)
 def _embedder():
-    """Local sentence-transformers embedding function for Chroma."""
+    """Local embedding function for Chroma — no API key, no torch required.
+
+    Prefers Chroma's built-in ONNX `all-MiniLM-L6-v2` (onnxruntime, lightweight,
+    installs on Python 3.11–3.14 and keeps the HF Spaces image small). If
+    `EMBEDDING_MODEL` is set to something custom AND sentence-transformers is
+    installed, use that instead.
+    """
     from chromadb.utils import embedding_functions
 
-    return embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name=config.EMBEDDING_MODEL
-    )
+    use_st = config.EMBEDDING_MODEL and config.EMBEDDING_MODEL != "onnx-default"
+    if use_st:
+        try:
+            return embedding_functions.SentenceTransformerEmbeddingFunction(
+                model_name=config.EMBEDDING_MODEL
+            )
+        except Exception as e:  # torch/sentence-transformers unavailable -> ONNX
+            print(f"[retrieval] sentence-transformers unavailable ({e}); using ONNX embedder")
+    return embedding_functions.DefaultEmbeddingFunction()
 
 
 def _collection():

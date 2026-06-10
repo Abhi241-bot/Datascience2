@@ -161,10 +161,19 @@ def strip_html(raw_html: str) -> str:
 
 
 def extract_section(text: str, start_pat: str, max_chars: int) -> str:
-    m = re.search(start_pat, text, re.I)
-    if not m:
+    """Grab the real section body, skipping the table-of-contents occurrence.
+
+    10-Ks list every "Item N" twice: once in the TOC near the top, once as the
+    actual section later. We skip matches in the first 8% of the document (the TOC
+    region) and prefer the one whose following text reads like prose, not a TOC.
+    """
+    matches = list(re.finditer(start_pat, text, re.I))
+    if not matches:
         return ""
-    chunk = text[m.start(): m.start() + max_chars]
+    toc_cutoff = int(len(text) * 0.08)
+    body = [m for m in matches if m.start() > toc_cutoff]
+    chosen = body[0] if body else matches[-1]
+    chunk = text[chosen.start(): chosen.start() + max_chars]
     return chunk.strip()
 
 

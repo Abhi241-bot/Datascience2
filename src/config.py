@@ -29,8 +29,11 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 ORCHESTRATOR_MODEL = os.getenv("ORCHESTRATOR_MODEL", "llama-3.3-70b-versatile")
 ORCHESTRATOR_TEMPERATURE = float(os.getenv("ORCHESTRATOR_TEMPERATURE", "0.1"))
 
-# ── Embeddings (local, free) ───────────────────────────────────────────────────
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
+# ── Embeddings (local, free, torch-free) ───────────────────────────────────────
+# "onnx-default" -> Chroma's built-in ONNX all-MiniLM-L6-v2 (onnxruntime, no torch;
+# works on Py 3.11-3.14, small Spaces image). Set to a sentence-transformers model
+# id (e.g. "sentence-transformers/all-mpnet-base-v2") to use that instead.
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "onnx-default")
 
 # ── Text-to-SQL fine-tuned model ───────────────────────────────────────────────
 # Base model fine-tuned with QLoRA on Spider; adapter loaded on top at inference.
