@@ -1,39 +1,67 @@
 {
   "engine": "groq-judge-fallback",
   "metrics": {
-    "Citation Correctness": 1.0,
-    "Analytical Depth": 1.0
+    "Citation Correctness": 0.9625,
+    "Analytical Depth": 0.675
   },
-  "n_questions": 4,
-  "judge_model": "llama-3.3-70b-versatile",
+  "n_questions": 8,
+  "judge_model": "llama-3.1-8b-instant",
   "per_question": [
     {
       "question": "Which company had the highest revenue in its most recent fiscal year, and how much was it?",
       "Citation Correctness": 1.0,
-      "Citation Correctness__reason": "All factual and numeric claims in the ANSWER are backed by a citation tag [SQL] that matches the CONTEXT.",
-      "Analytical Depth": 1.0,
-      "Analytical Depth__reason": "The answer provides a strong synthesis by interpreting and comparing the data, noting risks and outlook, and providing context, rather than merely restating numbers."
+      "Citation Correctness__reason": "All claims are correctly cited with matching context. The SQL queries and file references are accurately linked to the findings and risks/outlook sections.",
+      "Analytical Depth": 0.8,
+      "Analytical Depth__reason": "The answer provides a clear thesis statement and interprets the data. However, the analysis is somewhat limited to restating the numbers and does not provide a strong synthesis of the data. The risks/outlook section is a good attempt at providing additional context, but it could be more integrated with the main analysis."
     },
     {
       "question": "Which company reported the highest net income in its latest fiscal year?",
-      "Citation Correctness": 1.0,
-      "Citation Correctness__reason": "All factual and numeric claims in the ANSWER are backed by a citation tag that matches the CONTEXT.",
-      "Analytical Depth": 1.0,
-      "Analytical Depth__reason": "The answer provides a strong synthesis by interpreting and comparing the net income of companies, noting risks and outlook, and providing a clear analysis of the data."
+      "Citation Correctness": 0.8,
+      "Citation Correctness__reason": "The answer correctly cites the SQL query for the net income of the company with the highest CIK in the latest fiscal year. However, the citation for the company's name is missing, which is a crucial piece of information. Additionally, the citation for the company's sector and business operations is not provided, which is necessary for a thorough analysis.",
+      "Analytical Depth": 0.6,
+      "Analytical Depth__reason": "The answer provides some analysis by noting the risks associated with drawing conclusions about the company's financial performance or prospects. However, the analysis is limited to a general discussion of the risks and does not provide a deeper synthesis of the data. The answer also fails to compare the company's financial performance to industry benchmarks or provide a more nuanced discussion of the company's outlook."
     },
     {
       "question": "Did Apple or Microsoft spend more on R&D in their most recent fiscal year, and by how much?",
       "Citation Correctness": 1.0,
-      "Citation Correctness__reason": "All factual claims in the answer are correctly cited with matching SQL queries from the context.",
-      "Analytical Depth": 1.0,
-      "Analytical Depth__reason": "The answer provides a clear thesis, findings, risks, and outlook, and interprets the lack of data rather than just restating it, demonstrating strong synthesis and analysis."
+      "Citation Correctness__reason": "All claims are correctly cited with [SQL] and [filename] tags that match the CONTEXT.",
+      "Analytical Depth": 0.8,
+      "Analytical Depth__reason": "The ANSWER reads like an analyst report, interpreting and comparing data, but it does not provide a strong synthesis of the information. It notes risks and outlook, but the analysis is limited by the lack of data."
     },
     {
       "question": "How much did Johnson & Johnson spend on research and development in its most recent fiscal year?",
       "Citation Correctness": 1.0,
-      "Citation Correctness__reason": "All factual and numeric claims in the ANSWER are backed by a citation tag that matches the CONTEXT.",
-      "Analytical Depth": 1.0,
-      "Analytical Depth__reason": "The answer provides a strong synthesis by interpreting the data, comparing potential risks and opportunities, and providing an outlook, rather than just restating the numbers."
+      "Citation Correctness__reason": "All claims are correctly cited with matching context.",
+      "Analytical Depth": 0.8,
+      "Analytical Depth__reason": "The answer provides a clear thesis, findings, and risks/outlook, but lacks a strong synthesis and comparison of the data. The answer primarily restates numbers and does not provide a deeper analysis of the data."
+    },
+    {
+      "question": "Rank the technology companies (Apple, Microsoft, NVIDIA) by latest-year revenue.",
+      "Citation Correctness": 1.0,
+      "Citation Correctness__reason": "All claims are correctly cited with [SQL] tags that match the CONTEXT.",
+      "Analytical Depth": 0.0,
+      "Analytical Depth__reason": "The ANSWER reads like a flat data dump, merely restating numbers without any interpretation, comparison, or notes on risks/outlook."
+    },
+    {
+      "question": "What does Apple identify as key competitive pressures in its business?",
+      "Citation Correctness": 1.0,
+      "Citation Correctness__reason": "All claims are correctly cited with matching context. The citations are accurate and relevant to the claims made in the answer.",
+      "Analytical Depth": 0.8,
+      "Analytical Depth__reason": "The answer provides a clear and concise analysis of the key competitive pressures faced by Apple. However, it primarily restates information from the 10-K filing without providing a strong synthesis or interpretation of the data. The answer also fails to provide a detailed comparison of the competitive pressures and their potential impact on Apple's business."
+    },
+    {
+      "question": "How does Apple organize its reportable operating segments?",
+      "Citation Correctness": 0.9,
+      "Citation Correctness__reason": "All claims are correctly cited with [SQL] or [filename] tags, except for the claim that Apple's operating income was $133,050 million in 2025, which is not explicitly cited in the provided context. However, the revenue figure is correctly cited.",
+      "Analytical Depth": 0.8,
+      "Analytical Depth__reason": "The answer provides a clear thesis statement and interprets the data, but it mainly restates numbers and does not provide a strong synthesis of the information. The answer also notes risks and outlook, but it could be more detailed and provide a clearer analysis of the company's performance."
+    },
+    {
+      "question": "Which company was the most profitable by net margin in the latest year, and what risks could affect it?",
+      "Citation Correctness": 1.0,
+      "Citation Correctness__reason": "All factual/numeric claims in the ANSWER are backed by a citation tag ([SQL]) that matches the CONTEXT.",
+      "Analytical Depth": 0.8,
+      "Analytical Depth__reason": "The ANSWER provides a clear thesis, findings, and risks/outlook, but it mainly restates numbers without strong synthesis. It could benefit from more interpretation and comparison of the data."
     }
   ]
 }
