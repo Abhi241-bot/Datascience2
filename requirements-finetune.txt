@@ -1,0 +1,10 @@
+# ── Deps to run the QLoRA fine-tuned Text-to-SQL adapter as a live tool ───────
+# Needed only when SQL_ADAPTER_REPO (or finetune/adapter/) is set AND you have a GPU
+# (e.g. a HF Spaces GPU/ZeroGPU tier or Colab). Without these, text_to_sql falls
+# back to Groq. Training itself runs in finetune/train_qlora.ipynb on Colab.
+#   pip install -r requirements.txt -r requirements-finetune.txt
+torch==2.5.1
+transformers==4.47.1
+peft==0.14.0
+accelerate==1.2.1
+bitsandbytes==0.45.0 ; platform_system == "Linux"   # 4-bit load (Linux/GPU only)

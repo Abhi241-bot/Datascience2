@@ -1,48 +1,29 @@
-# ── Multi-Agent Analyst System ──────────────────────────────────────────────
-# Target: Python 3.11 (HF Spaces / local). Heavy fine-tuning deps live in the
-# Colab notebook (finetune/train_qlora.ipynb), NOT here, to keep Spaces light.
+# ── Runtime deps for the Gradio app / HF Spaces (free CPU tier) ───────────────
+# Kept light on purpose: the demo's Text-to-SQL tool uses the Groq fallback (no GPU),
+# and the Evals tab reads precomputed eval_results/*.json. For the fine-tuned adapter
+# see requirements-finetune.txt; to RUN the eval suite see requirements-dev.txt.
+# Target: Python 3.11.
 
 # Agent orchestration
 langgraph==0.2.60
-langchain==0.3.13
 langchain-core==0.3.28
-langchain-community==0.3.13
-langchain-groq==0.2.1          # orchestrator LLM (Groq, OpenAI-compatible, free tier)
+langchain-groq==0.2.1          # orchestrator LLM (Groq, free tier)
 
-# Observability / tracing
+# Observability / tracing (optional but light)
 langsmith==0.2.4
 
-# Vector store + embeddings (retrieval)
-# Chroma ships an ONNX all-MiniLM-L6-v2 embedder (onnxruntime, no torch) used by
-# default — keeps the image light. sentence-transformers is OPTIONAL (only if you
-# set EMBEDDING_MODEL to an ST model id); uncomment to enable.
+# Retrieval: Chroma + its built-in ONNX MiniLM embedder (no torch)
 chromadb==0.5.23
-# sentence-transformers==3.3.1
-
-# Text-to-SQL inference (loads the QLoRA adapter on Spaces / locally)
-transformers==4.47.1
-peft==0.14.0
-accelerate==1.2.1
-torch==2.5.1
-bitsandbytes==0.45.0 ; platform_system == "Linux"  # 4-bit load (Linux/Spaces only)
 
 # Web search tool
 duckduckgo-search==6.3.7
-tavily-python==0.5.0           # optional; used if TAVILY_API_KEY is set
+tavily-python==0.5.0           # used only if TAVILY_API_KEY is set
 
-# Guardrails: custom validators in src/guardrails/validators.py (regex-based
-# injection + PII detection) — no spacy/presidio needed, keeps the image light.
-
-# Evals
-ragas==0.2.9
-deepeval==2.0.9
-datasets==3.2.0
+# SQL safety parsing
+sqlparse==0.5.3
 
 # UI
 gradio==5.9.1
 
 # Utilities
 python-dotenv==1.0.1
-pydantic==2.10.4
-sqlparse==0.5.3                # SQL safety parsing
-pandas==2.2.3

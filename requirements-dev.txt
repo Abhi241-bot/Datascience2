@@ -1,0 +1,8 @@
+# ── Extra deps to RUN the evaluation suite (not needed by the deployed demo) ──
+#   pip install -r requirements.txt -r requirements-dev.txt
+# On Python 3.11. (On 3.14 ragas/deepeval may not build; the eval scripts then use
+# their built-in Groq-judge fallback automatically.)
+ragas==0.2.9
+deepeval==2.0.9
+datasets==3.2.0
+pandas==2.2.3

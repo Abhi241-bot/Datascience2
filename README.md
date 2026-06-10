@@ -13,7 +13,7 @@ An autonomous **multi-agent analyst**: a LangGraph workflow that plans a task, c
 | 3 | LangGraph workflow + memory | ✅ |
 | 4 | Guardrails | ✅ |
 | 5 | Evals (RAGAS, DeepEval, LangSmith) | ✅ |
-| 6 | Gradio app + HF Spaces deploy | ⏳ |
+| 6 | Gradio app + HF Spaces deploy | ✅ app built; deploy = your HF account |
 | 7 | Tests & README | ⏳ |
 
 ## Stack
