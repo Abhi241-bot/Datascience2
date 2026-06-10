@@ -26,7 +26,10 @@ CHROMA_COLLECTION = "financials_corpus"
 
 # ── Orchestrator LLM (Groq — OpenAI-compatible, free tier) ─────────────────────
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-ORCHESTRATOR_MODEL = os.getenv("ORCHESTRATOR_MODEL", "llama-3.3-70b-versatile")
+# llama-3.1-8b-instant: fast + a generous free-tier daily token budget (the 70B
+# model's 100K tokens/day exhausts quickly under multi-agent + eval loads). Set
+# ORCHESTRATOR_MODEL=llama-3.3-70b-versatile in .env for higher-quality reasoning.
+ORCHESTRATOR_MODEL = os.getenv("ORCHESTRATOR_MODEL", "llama-3.1-8b-instant")
 ORCHESTRATOR_TEMPERATURE = float(os.getenv("ORCHESTRATOR_TEMPERATURE", "0.1"))
 
 # ── Embeddings (local, free, torch-free) ───────────────────────────────────────

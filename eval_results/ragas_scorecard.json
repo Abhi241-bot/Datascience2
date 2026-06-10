@@ -1,0 +1,81 @@
+{
+  "engine": "groq-judge-fallback",
+  "metrics": {
+    "faithfulness": 0.625,
+    "answer_relevancy": 0.675,
+    "context_precision": 0.5875,
+    "context_recall": 0.5875
+  },
+  "thresholds": {
+    "faithfulness": 0.8,
+    "answer_relevancy": 0.75,
+    "context_precision": 0.7,
+    "context_recall": 0.7
+  },
+  "passed": {
+    "faithfulness": false,
+    "answer_relevancy": false,
+    "context_precision": false,
+    "context_recall": false
+  },
+  "n_questions": 8,
+  "judge_model": "llama-3.1-8b-instant",
+  "per_question": [
+    {
+      "user_input": "Which company had the highest revenue in its most recent fiscal year, and how much was it?",
+      "faithfulness": 0.8,
+      "answer_relevancy": 0.9,
+      "context_precision": 0.8,
+      "context_recall": 0.9
+    },
+    {
+      "user_input": "Which company reported the highest net income in its latest fiscal year?",
+      "faithfulness": 0.0,
+      "answer_relevancy": 0.0,
+      "context_precision": 0.0,
+      "context_recall": 0.0
+    },
+    {
+      "user_input": "Did Apple or Microsoft spend more on R&D in their most recent fiscal year, and by how much?",
+      "faithfulness": 0.0,
+      "answer_relevancy": 0.0,
+      "context_precision": 0.0,
+      "context_recall": 0.0
+    },
+    {
+      "user_input": "How much did Johnson & Johnson spend on research and development in its most recent fiscal year?",
+      "faithfulness": 0.9,
+      "answer_relevancy": 0.9,
+      "context_precision": 0.8,
+      "context_recall": 0.9
+    },
+    {
+      "user_input": "Rank the technology companies (Apple, Microsoft, NVIDIA) by latest-year revenue.",
+      "faithfulness": 0.8,
+      "answer_relevancy": 0.9,
+      "context_precision": 0.7,
+      "context_recall": 0.9
+    },
+    {
+      "user_input": "What does Apple identify as key competitive pressures in its business?",
+      "faithfulness": 0.8,
+      "answer_relevancy": 0.9,
+      "context_precision": 0.9,
+      "context_recall": 0.7
+    },
+    {
+      "user_input": "How does Apple organize its reportable operating segments?",
+      "faithfulness": 0.8,
+      "answer_relevancy": 0.9,
+      "context_precision": 0.7,
+      "context_recall": 0.4
+    },
+    {
+      "user_input": "Which company was the most profitable by net margin in the latest year, and what risks could affect it?",
+      "faithfulness": 0.9,
+      "answer_relevancy": 0.9,
+      "context_precision": 0.8,
+      "context_recall": 0.9
+    }
+  ]
+}

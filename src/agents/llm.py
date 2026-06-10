@@ -26,6 +26,8 @@ def get_llm(temperature: float | None = None):
         model=config.ORCHESTRATOR_MODEL,
         temperature=config.ORCHESTRATOR_TEMPERATURE if temperature is None else temperature,
         api_key=config.GROQ_API_KEY,
+        max_retries=6,        # backoff on 429 rate limits (free tier)
+        timeout=60,
     )
 
 

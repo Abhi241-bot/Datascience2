@@ -1,0 +1,39 @@
+{
+  "engine": "groq-judge-fallback",
+  "metrics": {
+    "Citation Correctness": 1.0,
+    "Analytical Depth": 1.0
+  },
+  "n_questions": 4,
+  "judge_model": "llama-3.3-70b-versatile",
+  "per_question": [
+    {
+      "question": "Which company had the highest revenue in its most recent fiscal year, and how much was it?",
+      "Citation Correctness": 1.0,
+      "Citation Correctness__reason": "All factual and numeric claims in the ANSWER are backed by a citation tag [SQL] that matches the CONTEXT.",
+      "Analytical Depth": 1.0,
+      "Analytical Depth__reason": "The answer provides a strong synthesis by interpreting and comparing the data, noting risks and outlook, and providing context, rather than merely restating numbers."
+    },
+    {
+      "question": "Which company reported the highest net income in its latest fiscal year?",
+      "Citation Correctness": 1.0,
+      "Citation Correctness__reason": "All factual and numeric claims in the ANSWER are backed by a citation tag that matches the CONTEXT.",
+      "Analytical Depth": 1.0,
+      "Analytical Depth__reason": "The answer provides a strong synthesis by interpreting and comparing the net income of companies, noting risks and outlook, and providing a clear analysis of the data."
+    },
+    {
+      "question": "Did Apple or Microsoft spend more on R&D in their most recent fiscal year, and by how much?",
+      "Citation Correctness": 1.0,
+      "Citation Correctness__reason": "All factual claims in the answer are correctly cited with matching SQL queries from the context.",
+      "Analytical Depth": 1.0,
+      "Analytical Depth__reason": "The answer provides a clear thesis, findings, risks, and outlook, and interprets the lack of data rather than just restating it, demonstrating strong synthesis and analysis."
+    },
+    {
+      "question": "How much did Johnson & Johnson spend on research and development in its most recent fiscal year?",
+      "Citation Correctness": 1.0,
+      "Citation Correctness__reason": "All factual and numeric claims in the ANSWER are backed by a citation tag that matches the CONTEXT.",
+      "Analytical Depth": 1.0,
+      "Analytical Depth__reason": "The answer provides a strong synthesis by interpreting the data, comparing potential risks and opportunities, and providing an outlook, rather than just restating the numbers."
+    }
+  ]
+}

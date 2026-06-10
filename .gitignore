@@ -34,9 +34,12 @@ finetune/adapter/*
 finetune/data/
 spider/
 
-# Eval artifacts
-eval_results/
-*.ragas.json
+# Eval artifacts — keep the committed scorecards (read by the Gradio Evals tab),
+# ignore everything else.
+eval_results/*
+!eval_results/.gitkeep
+!eval_results/ragas_scorecard.json
+!eval_results/deepeval_scorecard.json
 
 # LangSmith / caches
 .langsmith/
