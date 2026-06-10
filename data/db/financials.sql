@@ -1,63 +1,58 @@
--- Sample "company financials" database for the Analyst's Text-to-SQL tool.
--- Read-only at query time (the SQL guard blocks writes). Synthetic data.
-
-DROP TABLE IF EXISTS segment_revenue;
-DROP TABLE IF EXISTS financials;
-DROP TABLE IF EXISTS companies;
-
+-- REAL company financials from SEC EDGAR XBRL. Built by data/fetch_sec_data.py.
+BEGIN TRANSACTION;
 CREATE TABLE companies (
-    company_id   INTEGER PRIMARY KEY,
-    name         TEXT NOT NULL,
-    ticker       TEXT NOT NULL,
-    sector       TEXT NOT NULL,
-    hq_country   TEXT NOT NULL,
-    founded_year INTEGER
+    cik     INTEGER PRIMARY KEY,
+    name    TEXT NOT NULL,
+    ticker  TEXT NOT NULL,
+    sector  TEXT NOT NULL
 );
-
+INSERT INTO "companies" VALUES(34088,'Exxon Mobil Corp','XOM','Petroleum Refining');
+INSERT INTO "companies" VALUES(104169,'Walmart Inc.','WMT','Retail-Variety Stores');
+INSERT INTO "companies" VALUES(200406,'Johnson & Johnson','JNJ','Pharmaceutical Preparations');
+INSERT INTO "companies" VALUES(320193,'Apple Inc.','AAPL','Electronic Computers');
+INSERT INTO "companies" VALUES(789019,'Microsoft Corp','MSFT','Services-Prepackaged Software');
+INSERT INTO "companies" VALUES(1045810,'Nvidia Corp','NVDA','Semiconductors & Related Devices');
 CREATE TABLE financials (
-    fin_id       INTEGER PRIMARY KEY,
-    company_id   INTEGER NOT NULL REFERENCES companies(company_id),
-    fiscal_year  INTEGER NOT NULL,
-    revenue_musd     REAL,   -- total revenue, millions USD
-    net_income_musd  REAL,   -- net income, millions USD
-    rnd_musd         REAL,   -- R&D spend, millions USD
-    employees        INTEGER
+    cik                   INTEGER NOT NULL REFERENCES companies(cik),
+    fiscal_year           INTEGER NOT NULL,
+    revenue_musd          REAL,
+    gross_profit_musd     REAL,
+    operating_income_musd REAL,
+    net_income_musd       REAL,
+    rnd_musd              REAL,
+    assets_musd           REAL,
+    liabilities_musd      REAL,
+    cash_musd             REAL,
+    PRIMARY KEY (cik, fiscal_year)
 );
-
-CREATE TABLE segment_revenue (
-    seg_id       INTEGER PRIMARY KEY,
-    company_id   INTEGER NOT NULL REFERENCES companies(company_id),
-    fiscal_year  INTEGER NOT NULL,
-    segment      TEXT NOT NULL,
-    revenue_musd REAL
-);
-
-INSERT INTO companies VALUES
- (1,'Nimbus Cloud','NMBS','Technology','USA',2009),
- (2,'Helios Energy','HLOS','Energy','USA',1998),
- (3,'Veritas Pharma','VRTP','Healthcare','Switzerland',1985),
- (4,'Orchard Retail','ORCH','Consumer','USA',1972),
- (5,'Meridian Auto','MRDN','Industrials','Germany',1956);
-
-INSERT INTO financials VALUES
- (1,1,2022, 8200, 1450, 1600, 21000),
- (2,1,2023,10250, 1980, 1950, 24500),
- (3,2,2022,15400, 2100,  320, 18000),
- (4,2,2023,14100, 1750,  340, 17600),
- (5,3,2022,12300, 3050, 2800, 26000),
- (6,3,2023,13450, 3320, 3050, 27200),
- (7,4,2022,22500, 1320,  120, 95000),
- (8,4,2023,23800, 1410,  130, 97000),
- (9,5,2022,31200, 2450, 1850, 88000),
- (10,5,2023,29800, 1980, 1900, 86500);
-
-INSERT INTO segment_revenue VALUES
- (1,1,2023,'Cloud Platform', 6400),
- (2,1,2023,'Developer Tools',2350),
- (3,1,2023,'Other',          1500),
- (4,3,2023,'Oncology',       7200),
- (5,3,2023,'Cardiology',     4100),
- (6,3,2023,'Other',          2150),
- (7,5,2023,'Passenger Cars',21000),
- (8,5,2023,'Commercial',      6800),
- (9,5,2023,'Parts & Service', 2000);
+INSERT INTO "financials" VALUES(320193,2021,365817.0,152836.0,108949.0,94680.0,21914.0,351002.0,287912.0,34940.0);
+INSERT INTO "financials" VALUES(320193,2022,394328.0,170782.0,119437.0,99803.0,26251.0,352755.0,302083.0,23646.0);
+INSERT INTO "financials" VALUES(320193,2023,383285.0,169148.0,114301.0,96995.0,29915.0,352583.0,290437.0,29965.0);
+INSERT INTO "financials" VALUES(320193,2024,391035.0,180683.0,123216.0,93736.0,31370.0,364980.0,308030.0,29943.0);
+INSERT INTO "financials" VALUES(320193,2025,416161.0,195201.0,133050.0,112010.0,34550.0,359241.0,285508.0,35934.0);
+INSERT INTO "financials" VALUES(789019,2021,168088.0,115856.0,69916.0,61271.0,20716.0,333779.0,191791.0,14224.0);
+INSERT INTO "financials" VALUES(789019,2022,198270.0,135620.0,83383.0,72738.0,24512.0,364840.0,198298.0,13931.0);
+INSERT INTO "financials" VALUES(789019,2023,211915.0,146052.0,88523.0,72361.0,27195.0,411976.0,205753.0,34704.0);
+INSERT INTO "financials" VALUES(789019,2024,245122.0,171008.0,109433.0,88136.0,29510.0,512163.0,243686.0,18315.0);
+INSERT INTO "financials" VALUES(789019,2025,281724.0,193893.0,128528.0,101832.0,32488.0,619003.0,275524.0,30242.0);
+INSERT INTO "financials" VALUES(1045810,2022,26914.0,17475.0,10041.0,9752.0,5268.0,44187.0,17575.0,1990.0);
+INSERT INTO "financials" VALUES(1045810,2023,NULL,15356.0,4224.0,4368.0,7339.0,41182.0,19081.0,3389.0);
+INSERT INTO "financials" VALUES(1045810,2024,NULL,44301.0,32972.0,29760.0,8675.0,65728.0,22750.0,7280.0);
+INSERT INTO "financials" VALUES(1045810,2025,NULL,97858.0,81453.0,72880.0,12914.0,111601.0,32274.0,8589.0);
+INSERT INTO "financials" VALUES(1045810,2026,NULL,153463.0,130387.0,120067.0,18497.0,206803.0,49510.0,10605.0);
+INSERT INTO "financials" VALUES(200406,2021,82584.0,54157.0,NULL,14714.0,NULL,174894.0,111616.0,13985.0);
+INSERT INTO "financials" VALUES(200406,2022,78740.0,55338.0,NULL,20878.0,0.0,182018.0,107995.0,14487.0);
+INSERT INTO "financials" VALUES(200406,2023,85159.0,58606.0,NULL,35153.0,483.0,167558.0,98784.0,21859.0);
+INSERT INTO "financials" VALUES(200406,2024,88821.0,61350.0,NULL,14066.0,1841.0,180104.0,108614.0,24105.0);
+INSERT INTO "financials" VALUES(200406,2025,94193.0,63937.0,NULL,26804.0,109.0,199210.0,117666.0,19709.0);
+INSERT INTO "financials" VALUES(104169,2022,567762.0,NULL,25942.0,13673.0,NULL,244860.0,NULL,14760.0);
+INSERT INTO "financials" VALUES(104169,2023,605881.0,NULL,20428.0,11680.0,NULL,243197.0,NULL,8625.0);
+INSERT INTO "financials" VALUES(104169,2024,642637.0,NULL,27012.0,15511.0,NULL,252399.0,NULL,9867.0);
+INSERT INTO "financials" VALUES(104169,2025,674538.0,NULL,29348.0,19436.0,NULL,260823.0,NULL,9037.0);
+INSERT INTO "financials" VALUES(104169,2026,706413.0,NULL,29825.0,21893.0,NULL,284668.0,NULL,10727.0);
+INSERT INTO "financials" VALUES(34088,2021,276692.0,NULL,NULL,23040.0,843.0,338923.0,163240.0,6802.0);
+INSERT INTO "financials" VALUES(34088,2022,NULL,NULL,NULL,55740.0,824.0,369067.0,166594.0,29640.0);
+INSERT INTO "financials" VALUES(34088,2023,NULL,NULL,NULL,36010.0,900.0,376317.0,163779.0,31539.0);
+INSERT INTO "financials" VALUES(34088,2024,NULL,NULL,NULL,33680.0,1000.0,453475.0,182869.0,23029.0);
+INSERT INTO "financials" VALUES(34088,2025,NULL,NULL,NULL,28844.0,1200.0,448980.0,182354.0,10681.0);
+COMMIT;

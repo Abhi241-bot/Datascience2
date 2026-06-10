@@ -16,8 +16,10 @@ env/
 !.env.example
 
 # Data / models (large; not committed)
+# Real SEC 10-K corpus (.md) IS committed; everything else in corpus/ is not.
 data/corpus/*
 !data/corpus/.gitkeep
+!data/corpus/*.md
 data/chroma/
 *.sqlite
 *.db

@@ -72,7 +72,7 @@ def get_schema(db_path: str | None = None) -> str:
     path = Path(db_path) if db_path else config.DB_PATH
     if not path.exists():
         raise FileNotFoundError(
-            f"DB not found at {path}. Build it: python data/db/build_db.py"
+            f"DB not found at {path}. Build it: python data/fetch_sec_data.py"
         )
     con = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
     rows = con.execute(
