@@ -64,7 +64,10 @@ CONCEPTS = {
     "gross_profit_musd": (["GrossProfit"], False),
     "operating_income_musd": (["OperatingIncomeLoss"], False),
     "net_income_musd": (["NetIncomeLoss"], False),
-    "rnd_musd": (["ResearchAndDevelopmentExpense"], False),
+    # Prefer the "excluding acquired in-process" R&D line (clean operating R&D, e.g.
+    # JNJ ~$15-17B); fall back to the plain tag for filers that lack it (Apple/MSFT).
+    "rnd_musd": (["ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost",
+                   "ResearchAndDevelopmentExpense"], False),
     "assets_musd": (["Assets"], True),
     "liabilities_musd": (["Liabilities"], True),
     "cash_musd": (["CashAndCashEquivalentsAtCarryingValue"], True),
@@ -87,13 +90,19 @@ def _get_json(url: str):
 
 # ── financials ─────────────────────────────────────────────────────────────────
 def annual_series(facts: dict, tags: list[str], instant: bool) -> dict[int, float]:
-    """{fiscal_year(end-date year): value_in_millions} from 10-K XBRL points."""
-    out: dict[int, tuple[float, str]] = {}  # year -> (val, filed)
+    """{fiscal_year(end-date year): value_in_millions} from 10-K XBRL points.
+
+    Merges across the fallback tags (companies change tags over the years), so a
+    later tag fills years the primary tag is missing. First tag in `tags` wins on
+    a per-year conflict; within a tag, the most recently *filed* value wins.
+    """
     gaap = facts.get("facts", {}).get("us-gaap", {})
+    merged: dict[int, float] = {}
     for tag in tags:
         node = gaap.get(tag)
         if not node:
             continue
+        per_tag: dict[int, tuple[float, str]] = {}  # year -> (val, filed)
         for unit, entries in node.get("units", {}).items():
             if unit != "USD":
                 continue
@@ -115,11 +124,11 @@ def annual_series(facts: dict, tags: list[str], instant: bool) -> dict[int, floa
                         continue
                 yr = int(end[:4])
                 filed = e.get("filed", "")
-                if yr not in out or filed > out[yr][1]:
-                    out[yr] = (e["val"], filed)
-        if out:
-            break  # first concept tag that yields data wins
-    return {y: round(v / 1e6, 2) for y, (v, _f) in out.items()}
+                if yr not in per_tag or filed > per_tag[yr][1]:
+                    per_tag[yr] = (e["val"], filed)
+        for yr, (val, _f) in per_tag.items():
+            merged.setdefault(yr, val)  # earlier tag in the list wins per year
+    return {y: round(v / 1e6, 2) for y, v in merged.items()}
 
 
 def fetch_company(cik: int) -> dict:
