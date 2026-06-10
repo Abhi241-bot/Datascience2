@@ -1,31 +1,118 @@
-# Multi-Agent Analyst System
+# 🔎 Multi-Agent Financial Analyst
 
-> 🚧 Under construction — built phase by phase per [`MultiAgent_Analyst_System_SPEC.md`](MultiAgent_Analyst_System_SPEC.md). The recruiter-grade README lands in the final phase.
+**An autonomous multi-agent analyst with a self-fine-tuned SQL tool, guardrails, and RAGAS evals.** Ask a question about real public companies and a LangGraph agent *plans*, calls tools (10-K retrieval · web search · a **QLoRA-fine-tuned Text-to-SQL model**), passes input/output **guardrails**, pauses at a **human-in-the-loop checkpoint**, and produces a **cited analytical report** — every run scored by a **RAGAS/DeepEval** harness and traceable in LangSmith.
 
-An autonomous **multi-agent analyst**: a LangGraph workflow that plans a task, calls tools (retrieval over a financials corpus, web search, and a **Text-to-SQL tool powered by a QLoRA model fine-tuned on Spider**), and produces a **cited analytical report** — wrapped in stateful memory, a human-in-the-loop checkpoint, guardrails, and a RAGAS/DeepEval evaluation harness. Deploys to Hugging Face Spaces with a Gradio UI that streams reasoning live.
+> Not a RAG chatbot: it *does* something — decomposes a task, routes to the right tool, synthesizes a sourced artifact, and evaluates itself. All data is **real** (SEC EDGAR financials + 10-K filings; Spider for the fine-tune).
 
-## Status
+---
 
-| Phase | Description | Status |
-|---|---|---|
-| 1 | QLoRA fine-tune of the SQL tool (Spider) | ✅ scripts + notebook |
-| 2 | Tools (retrieval, web search, text-to-SQL) | ✅ |
-| 3 | LangGraph workflow + memory | ✅ |
-| 4 | Guardrails | ✅ |
-| 5 | Evals (RAGAS, DeepEval, LangSmith) | ✅ |
-| 6 | Gradio app + HF Spaces deploy | ✅ app built; deploy = your HF account |
-| 7 | Tests & README | ⏳ |
+## 🎥 Demo
 
-## Stack
+- **Live demo:** _deploy in one step — see [DEPLOY.md](DEPLOY.md)_ (free Hugging Face Spaces / Gradio).
+- The **Analyst** tab streams the agent's reasoning + tool calls live, then shows the cited report. The **Evals** tab shows the latest scorecard.
 
-LangGraph · LangSmith · RAGAS · DeepEval · Chroma · Unsloth/PEFT/BitsAndBytes (QLoRA) · Groq (orchestrator) · Gradio · Python 3.11
-
-## Quickstart (dev)
-
-```bash
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-cp .env.example .env   # fill in GROQ_API_KEY
+```
+Q: "Which company had the highest revenue last year, and what are its main risks?"
+[planner] step 1: find highest-revenue company (text_to_sql)
+[planner] step 2: retrieve its risk factors (retrieval)
+[researcher] text_to_sql -> Walmart $706,413M  (provenance: finetuned-adapter)
+[researcher] retrieval -> 4 chunks from wmt_10k.md
+[checkpoint] awaiting human approval before the report …
+[analyst] cited report citing [SQL], [wmt_10k.md]
 ```
 
-See [`finetune/README.md`](finetune/README.md) for the fine-tuning workflow.
+---
+
+## 🏗️ Architecture
+
+```mermaid
+flowchart TD
+    Q([User question]) --> GI{{"🛡️ guard_input<br/>injection / PII"}}
+    GI -- blocked --> END([Safe refusal])
+    GI -- ok --> P[planner<br/>decompose into tool actions]
+    P --> R[researcher<br/>run tools · gather cited findings]
+    R -->|need more evidence| R
+    R --> HITL{{"⏸ human_review<br/>HITL checkpoint"}}
+    HITL --> A[analyst<br/>synthesize cited report]
+    A --> GO{{"🛡️ guard_output<br/>citations · no hallucinated sources · read-only SQL"}}
+    GO --> REP([📄 Cited report])
+
+    R -.-> T1[retrieval<br/>Chroma over 10-Ks]
+    R -.-> T2[web_search<br/>DuckDuckGo/Tavily]
+    R -.-> T3["text_to_sql<br/>QLoRA model + SQL guard"]
+    T3 -.-> DB[(financials.sqlite<br/>real SEC XBRL)]
+    T1 -.-> VS[(Chroma<br/>real 10-K text)]
+
+    subgraph Memory [stateful memory across the run]
+      ST[AnalystState: plan · findings · citations · loop_count]
+    end
+```
+
+State persists across nodes via a typed `AnalystState` + a LangGraph `MemorySaver` checkpointer (which is what makes the HITL pause/resume possible).
+
+---
+
+## 📊 Proof points
+
+### 1. QLoRA Text-to-SQL — execution accuracy, before vs after
+
+Fine-tuned on **Spider** (4-bit base, LoRA r=16/α=32/all-linear, on a free Colab T4) and scored by **execution accuracy** (run the SQL, compare result sets — not BLEU). See [finetune/](finetune/).
+
+| Model | Exec accuracy | Runnable rate |
+|---|---|---|
+| Base Llama-3.1-8B-Instruct (4-bit) | _run `finetune/evaluate_sql.py`_ | — |
+| **+ QLoRA (Spider)** | **_fill from Colab run_** | — |
+
+> Training requires a GPU — run [`finetune/train_qlora.ipynb`](finetune/train_qlora.ipynb) on Colab, then paste the before/after numbers here.
+
+### 2. RAGAS / DeepEval scorecard (real, on the golden set)
+
+8 golden questions grounded in the real DB + 10-Ks. Judge = Groq; embeddings = ONNX MiniLM. (Numbers below from `llama-3.1-8b-instant`; the 70B model scores higher.)
+
+| RAGAS | Score | Thr | | DeepEval (G-Eval) | Score |
+|---|---|---|---|---|---|
+| faithfulness | 0.625 | 0.80 | | Citation Correctness | 0.96 |
+| answer relevancy | 0.675 | 0.75 | | Analytical Depth | 0.68 |
+| context precision | 0.588 | 0.70 | | | |
+| context recall | 0.588 | 0.70 | | | |
+
+Regenerate: `python -m src.eval.ragas_eval` · `python -m src.eval.deepeval_eval` (scorecards in [eval_results/](eval_results/), shown in the app's Evals tab).
+
+---
+
+## 🚀 Quickstart
+
+```bash
+git clone https://github.com/Abhi241-bot/Datascience2
+cd Datascience2
+python -m venv .venv && .venv\Scripts\activate    # macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+
+cp .env.example .env        # add GROQ_API_KEY (free: https://console.groq.com/keys)
+python data/fetch_sec_data.py   # fetch real SEC financials + 10-K text (one time)
+python app.py               # open http://127.0.0.1:7860
+```
+
+- **Fine-tune the SQL tool:** [`finetune/train_qlora.ipynb`](finetune/train_qlora.ipynb) (Colab T4) → set `SQL_ADAPTER_REPO` in `.env`.
+- **Run evals:** `pip install -r requirements-dev.txt` then `python -m src.eval.ragas_eval`.
+- **Deploy:** [DEPLOY.md](DEPLOY.md) (free HF Spaces).
+- **Tests:** `pytest` (offline tests need no key; live tests skip without `GROQ_API_KEY`).
+
+---
+
+## 🧰 Stack & components
+
+| Layer | Tool |
+|---|---|
+| Orchestration | **LangGraph** (stateful multi-agent graph + HITL) |
+| Orchestrator LLM | **Groq** (`llama-3.1-8b-instant`, free) |
+| Fine-tune | **Unsloth + PEFT + BitsAndBytes** (QLoRA) on **Spider** |
+| Retrieval | **Chroma** + ONNX MiniLM embeddings (no API key) |
+| Evals | **RAGAS** + **DeepEval** (G-Eval) + **LangSmith** traces |
+| Guardrails | custom validators (injection · PII · read-only SQL · citations) |
+| UI / deploy | **Gradio** → **Hugging Face Spaces** |
+
+**Agents:** `planner` decomposes the question into tool actions · `researcher` runs the tools, gathers cited findings, and loops if evidence is thin · `analyst` writes the cited report.
+**Tools:** `text_to_sql` (your fine-tuned model → read-only SQL → real financials DB) · `retrieval` (semantic search over real 10-Ks) · `web_search` (recent/external context).
+
+Data: **SEC EDGAR** XBRL financials + 10-K excerpts for AAPL, MSFT, NVDA, JNJ, WMT, XOM (built by [`data/fetch_sec_data.py`](data/fetch_sec_data.py)).
