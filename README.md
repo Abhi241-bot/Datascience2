@@ -1,3 +1,15 @@
+---
+title: Multi-Agent Financial Analyst
+emoji: 🔎
+colorFrom: indigo
+colorTo: blue
+sdk: gradio
+sdk_version: 5.9.1
+app_file: app.py
+python_version: "3.11"
+pinned: false
+---
+
 # 🔎 Multi-Agent Financial Analyst
 
 **An autonomous multi-agent analyst with a self-fine-tuned SQL tool, guardrails, and RAGAS evals.** Ask a question about real public companies and a LangGraph agent *plans*, calls tools (10-K retrieval · web search · a **QLoRA-fine-tuned Text-to-SQL model**), passes input/output **guardrails**, pauses at a **human-in-the-loop checkpoint**, and produces a **cited analytical report** — every run scored by a **RAGAS/DeepEval** harness and traceable in LangSmith.
