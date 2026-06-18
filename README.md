@@ -12,6 +12,8 @@ pinned: false
 
 # 🔎 Multi-Agent Financial Analyst
 
+**▶️ Live demo:** **https://huggingface.co/spaces/abhiram3000/multi-agent-analyst**
+
 **An autonomous multi-agent analyst with a self-fine-tuned SQL tool, guardrails, and RAGAS evals.** Ask a question about real public companies and a LangGraph agent *plans*, calls tools (10-K retrieval · web search · a **QLoRA-fine-tuned Text-to-SQL model**), passes input/output **guardrails**, pauses at a **human-in-the-loop checkpoint**, and produces a **cited analytical report** — every run scored by a **RAGAS/DeepEval** harness and traceable in LangSmith.
 
 > Not a RAG chatbot: it *does* something — decomposes a task, routes to the right tool, synthesizes a sourced artifact, and evaluates itself. All data is **real** (SEC EDGAR financials + 10-K filings; Spider for the fine-tune).
@@ -20,8 +22,10 @@ pinned: false
 
 ## 🎥 Demo
 
-- **Live demo:** _deploy in one step — see [DEPLOY.md](DEPLOY.md)_ (free Hugging Face Spaces / Gradio).
+**Live on Hugging Face Spaces (Gradio):** https://huggingface.co/spaces/abhiram3000/multi-agent-analyst
+
 - The **Analyst** tab streams the agent's reasoning + tool calls live, then shows the cited report. The **Evals** tab shows the latest scorecard.
+- Deploy your own: [DEPLOY.md](DEPLOY.md).
 
 ```
 Q: "Which company had the highest revenue last year, and what are its main risks?"
@@ -68,14 +72,14 @@ State persists across nodes via a typed `AnalystState` + a LangGraph `MemorySave
 
 ### 1. QLoRA Text-to-SQL — execution accuracy, before vs after
 
-Fine-tuned on **Spider** (4-bit base, LoRA r=16/α=32/all-linear, on a free Colab T4) and scored by **execution accuracy** (run the SQL, compare result sets — not BLEU). See [finetune/](finetune/).
+QLoRA fine-tune (4-bit base, LoRA r=16/α=32/all-linear) of a Text-to-SQL model, scored by **execution accuracy** (run the SQL against the real databases, compare result sets — not BLEU). Adapter: [`abhiram3000/llama31-sql-qlora`](https://huggingface.co/abhiram3000/llama31-sql-qlora). See [finetune/](finetune/).
 
 | Model | Exec accuracy | Runnable rate |
 |---|---|---|
-| Base Llama-3.1-8B-Instruct (4-bit) | _run `finetune/evaluate_sql.py`_ | — |
-| **+ QLoRA (Spider)** | **_fill from Colab run_** | — |
+| Base Llama-3.1-8B-Instruct (4-bit) | _pending_ | _pending_ |
+| **+ QLoRA** | _pending_ | _pending_ |
 
-> Training requires a GPU — run [`finetune/train_qlora.ipynb`](finetune/train_qlora.ipynb) on Colab, then paste the before/after numbers here.
+> Before/after numbers are produced by the in-notebook eval on held-out **Spider dev** ([`finetune/train_qlora.ipynb`](finetune/train_qlora.ipynb)); this table is filled in when the training run completes.
 
 ### 2. RAGAS / DeepEval scorecard (real, on the golden set)
 
@@ -118,7 +122,7 @@ python app.py               # open http://127.0.0.1:7860
 |---|---|
 | Orchestration | **LangGraph** (stateful multi-agent graph + HITL) |
 | Orchestrator LLM | **Groq** (`llama-3.1-8b-instant`, free) |
-| Fine-tune | **Unsloth + PEFT + BitsAndBytes** (QLoRA) on **Spider** |
+| Fine-tune | **Unsloth + PEFT + BitsAndBytes** (QLoRA) on **Spider** → [`abhiram3000/llama31-sql-qlora`](https://huggingface.co/abhiram3000/llama31-sql-qlora) |
 | Retrieval | **Chroma** + ONNX MiniLM embeddings (no API key) |
 | Evals | **RAGAS** + **DeepEval** (G-Eval) + **LangSmith** traces |
 | Guardrails | custom validators (injection · PII · read-only SQL · citations) |
