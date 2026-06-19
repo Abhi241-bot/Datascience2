@@ -37,6 +37,8 @@ Q: "Which company had the highest revenue last year, and what are its main risks
 [analyst] cited report citing [SQL], [wmt_10k.md]
 ```
 
+> Tool provenance: on a **GPU/ZeroGPU** Space the SQL tool loads the QLoRA adapter (`finetuned-adapter`); on the **free CPU** Space it transparently falls back to Groq (`groq-fallback`). Either way the SQL is read-only, guarded, and executed against the real DB.
+
 ---
 
 ## 🏗️ Architecture
