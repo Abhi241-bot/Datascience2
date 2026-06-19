@@ -35,14 +35,13 @@ the gold and predicted SQL against the actual SQLite db and compare result sets
 
 > Measurable exec-accuracy improvement after fine-tuning, documented with before/after numbers.
 
-Fill in after running `evaluate_sql.py` (writes `eval_report.json`):
+Measured on **200 held-out Spider dev** questions (`eval_report.json`):
 
 | Model | Exec accuracy | Runnable rate |
 |---|---|---|
-| Base (`Llama-3.1-8B-Instruct`, 4-bit) | _TBD_ % | _TBD_ % |
-| **+ QLoRA (Spider)** | **_TBD_ %** | **_TBD_ %** |
-| **Δ** | **_TBD_ pp** | — |
+| Base (`Llama-3.1-8B-Instruct`, 4-bit) | 49.0% | 77.5% |
+| **+ QLoRA (Spider)** | **54.5%** | **81.0%** |
+| **Δ** | **+5.5 pp** (+11% rel.) | **+3.5 pp** |
 
-> ⚠️ Training requires a GPU (free Colab T4). It was **not** run in this environment
-> (no GPU); the scripts/notebook are complete and ready to run. Paste the real
-> numbers here and in the root README after the Colab run.
+Adapter: [`abhiram3000/llama31-sql-qlora`](https://huggingface.co/abhiram3000/llama31-sql-qlora).
+Trained on an NVIDIA RTX A4500 (bf16, packing, ~600 steps).

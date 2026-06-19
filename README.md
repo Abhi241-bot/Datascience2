@@ -74,12 +74,15 @@ State persists across nodes via a typed `AnalystState` + a LangGraph `MemorySave
 
 QLoRA fine-tune (4-bit base, LoRA r=16/α=32/all-linear) of a Text-to-SQL model, scored by **execution accuracy** (run the SQL against the real databases, compare result sets — not BLEU). Adapter: [`abhiram3000/llama31-sql-qlora`](https://huggingface.co/abhiram3000/llama31-sql-qlora). See [finetune/](finetune/).
 
+Measured on **200 held-out Spider dev** questions (generate SQL → execute → compare result sets to gold):
+
 | Model | Exec accuracy | Runnable rate |
 |---|---|---|
-| Base Llama-3.1-8B-Instruct (4-bit) | _pending_ | _pending_ |
-| **+ QLoRA** | _pending_ | _pending_ |
+| Base Llama-3.1-8B-Instruct (4-bit) | 49.0% | 77.5% |
+| **+ QLoRA (Spider)** | **54.5%** | **81.0%** |
+| **Δ** | **+5.5 pts** (+11% rel.) | **+3.5 pts** |
 
-> Before/after numbers are produced by the in-notebook eval on held-out **Spider dev** ([`finetune/train_qlora.ipynb`](finetune/train_qlora.ipynb)); this table is filled in when the training run completes.
+> Reproduce with the in-notebook eval in [`finetune/train_qlora.ipynb`](finetune/train_qlora.ipynb) (writes `eval_report.json`).
 
 ### 2. RAGAS / DeepEval scorecard (real, on the golden set)
 
